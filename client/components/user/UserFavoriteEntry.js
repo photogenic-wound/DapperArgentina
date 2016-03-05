@@ -13,11 +13,13 @@ class UserFavoriteList extends React.Component {
     var unFavorite = () => {
       Materialize.toast(this.props.name + " was removed!", 4000)
       Favs.deleteFavedRepoFromApi(this.props.id);
-      this.color = "grey-text lighten-2";
+      this.color = "grey-text";
       this.render();
     }
-      this.color = "cyan-text lighten-2";
-  	return(
+      
+    this.color = "cyan-text";
+  	
+    return(
       <li className="user-favorite-entry">
         <div className="collapsible-header">
           <span>{this.props.data.name}</span>

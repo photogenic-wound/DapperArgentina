@@ -1,4 +1,3 @@
-
 "use strict";
 var request = require('request');
 var _ = require('lodash');
@@ -77,7 +76,7 @@ module.exports = (app, express) => {
           });
         });
       res.send('received');
-      });
+      })
       .catch((error) => {
         console.log('test: ', error);
       });

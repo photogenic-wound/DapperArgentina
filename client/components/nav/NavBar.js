@@ -27,7 +27,7 @@ const NavBar = class NavBar extends React.Component {
               <i className="material-icons left">perm_identity</i>
               <span>{headerText}</span>
             </Link>
-            <a id="logo-container" href="#" className="brand-logo left">best first ticket</a>
+            <a id="logo-container" href="#" className="brand-logo left"> first ticket</a>
             <ul className="right hide-on-med-and-down">
               {this.props.links.map ((link, index) => 
                 <NavEntry data={link} key={index} />
