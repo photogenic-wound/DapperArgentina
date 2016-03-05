@@ -30,5 +30,17 @@ Repos.prototype.getRepos = function () {
   }
 };
 
+Repos.prototype.inserRepoAsync = function(repo) {
+   
+    // Function to map user properties to usable SQL strings
+    let userKeys = [];
+    let userVals = [];
+     _.each(repo,(val,key) => {
+      userKeys.push( key + '');
+      userVals.push( '"' + val + '"');
+     })
+    return db.raw(`INSERT INTO repos ( ${userKeys.join()} ) VALUES (${userVals.join()})`)
+}
+
 module.exports = Repos;
 
