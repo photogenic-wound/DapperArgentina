@@ -103,7 +103,7 @@ module.exports = (app, express) => {
 
   app.get('/auth/github', passport.authenticate('github'));
 
-  app.get('/auth/github/callback', 
+  app.get('/auth/github/callback',
     passport.authenticate('github', {failureRedirect:'/'}),
     (req, res) => {
        Users.getUserAsync(req.user.profile.username)
@@ -125,7 +125,7 @@ module.exports = (app, express) => {
       });
     });
 }
-      
+
 
 
 

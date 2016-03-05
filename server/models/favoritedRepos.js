@@ -8,7 +8,7 @@ var FavoritedRepos = function() {
 	this._favoritedRepos = {};
 }
 
-let dbJoinTableQuery = `users INNER JOIN repos_users 
+let dbJoinTableQuery = `users INNER JOIN repos_users
 													ON users.internal_id = repos_users.user_id
 												INNER JOIN repos
 													ON repos_users.repo_id = repos.internal_id`
@@ -29,7 +29,7 @@ FavoritedRepos.prototype.getFavoritedReposAsync = function(userHandle, forceRefr
       });
       this._favoritedRepos[userHandle] = usersRepos;
       return this._favoritedRepos[userHandle];
-    }); 
+    });
   }
 }
 
@@ -40,7 +40,7 @@ FavoritedRepos.prototype.insertFavoritedRepoAsync = function(gitRepoId, userHand
 		]).then((allResults) => {
 			let repoInternalId = allResults[0][0][0]['internal_id'];
 			let userInternalId = allResults[1][0][0]['internal_id'];
-			return db.raw(`INSERT INTO repos_users (repo_id, user_id) 
+			return db.raw(`INSERT INTO repos_users (repo_id, user_id)
 							VALUES (${repoInternalId}, ${userInternalId});`)
 			  .then( () => this.getFavoritedReposAsync(userHandle, true));
 		});
@@ -53,7 +53,7 @@ FavoritedRepos.prototype.deleteFavoritedRepoAsync = function(gitRepoId, userHand
 		]).then((allResults) => {
 			let repoInternalId = allResults[0][0][0]['internal_id'];
 			let userInternalId = allResults[1][0][0]['internal_id'];
-			return db.raw(`DELETE FROM repos_users WHERE 
+			return db.raw(`DELETE FROM repos_users WHERE
 				repo_id=${repoInternalId} && user_id=${userInternalId};`)
 				.then( () => this.getFavoritedReposAsync(userHandle, true));
 		});
