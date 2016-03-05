@@ -52,8 +52,8 @@ Users.prototype.makeNewUserAsync = function (user) {
 }
 
 Users.prototype.getOtherUsersAsync = function(userHandle) {
-  if(this._user[userHandle]) {
-    return new Promise((resolve) => resolve(_.omit(this._users, userHandle));
+  if(this._users[userHandle]) {
+    return new Promise((resolve) => resolve(_.omit(this._users, userHandle)));
   } else {
     return this.getUserAsync(userHandle, true)
       .then(() => this.getOtherUsersAsync(userHandle))
