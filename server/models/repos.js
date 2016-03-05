@@ -30,7 +30,7 @@ Repos.prototype.getRepos = function () {
   }
 };
 
-Repos.prototype.inserRepoAsync = function(repo) {
+Repos.prototype.insertRepoAsync = function(repo) {
    
     // Function to map user properties to usable SQL strings
     let userKeys = [];
