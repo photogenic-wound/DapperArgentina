@@ -10,7 +10,7 @@ const linksList = [
   {name: "new tickets", url: '/'},
   {name: "repos", url: '/repos'},
   {name: "getting started", url: '/resources'},
-  {name: "pull requests", url: '/pulls'}
+  {name: "pull requests", url: '/pulls'},
   {name: "friends", url: '/friends'}
 ];
 

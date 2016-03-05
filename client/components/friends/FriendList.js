@@ -1,7 +1,5 @@
 const React = require('react');
-const TicketSearch = require('./TicketSearch');
-const TicketEntry = require('./TicketEntry');
-
+const FriendEntry = require('./FriendEntry');
 
 class FriendList extends React.Component {
   
@@ -22,7 +20,7 @@ class FriendList extends React.Component {
     <div>
       <h4>Friends on Github</h4>
       <div className="main-friends-view">
-          {_values(this.state.friends).map ((friend, index) => (
+          {_.values(this.props.friends).map ((friend, index) => (
               <FriendEntry data={friend} key={index} />
             )
           )}
