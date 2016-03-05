@@ -15,18 +15,17 @@ Pulls.prototype.getUserIdAsync = function(userHandle) {
 }
 
 Pulls.prototype.makePullByUserAsync = function(pull, userHandle) {
-
 	return this.getUserIdAsync(userHandle)
 	.then((user_id) => {
 		pull.user_id = user_id;
-		pull.merged = Number(pull.merged);
-		this._pulls.push(pull);
+		pull.merged = Number(pull.state === "closed");
 
+	  let acceptedKeys = ['id', 'html_url', 'title', 'merged', 'user_id'];
 	  let pullKeys = [];
 	  let pullVals = [];
-	   _.each(pull,(val,key) => {
+	  acceptedKeys.forEach((key) => {
 	    pullKeys.push( key + '');
-	    pullVals.push( '"' + val + '"');
+	    pullVals.push( '"' + pull[key] + '"');
 	  })
 
 	  return db.raw(`INSERT INTO pulls ( ${pullKeys.join()} ) VALUES (${pullVals.join()})`)

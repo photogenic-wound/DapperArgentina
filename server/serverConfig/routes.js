@@ -1,4 +1,5 @@
-'use strict';
+
+"use strict";
 var request = require('request');
 var _ = require('lodash');
 var passport = require('passport');
@@ -29,7 +30,7 @@ module.exports = (app, express) => {
   });
 
   app.route('/api/issues')
-    .get((req, res) => {
+    .get(function(req, res) {
       Issues.getIssues()
       .then((results) => res.send(results))
       .catch((err) => {
@@ -39,7 +40,7 @@ module.exports = (app, express) => {
     });
 
   app.route('/api/repos')
-    .get((req, res) =>{
+    .get(function(req, res){
       Repos.getRepos()
       .then((results) => res.send(results))
       .catch(() => {
@@ -52,13 +53,33 @@ module.exports = (app, express) => {
       console.log('hi',req.session);
       FaveRepos.getFavoritedReposAsync(req.session.passport.user.profile.username)
       .then((faveRepos) => {
+        console.log('got all favorites');
         res.send(faveRepos);
       })
     })
-    .post((req, res) => {
-      FaveRepos.insertFavoritedRepoAsync(req.body.id, req.session.passport.user.profile.username)
-      .then(() => {
-        res.send('received');
+    .post(function(req, res) {
+      var userHandle = req.session.passport.user.profile.username; // userHandle = req.session.passport.user.profile.username
+      FaveRepos.insertFavoritedRepoAsync(req.body.id, userHandle)
+      .then((data) => {
+        Repos.getRepoByIdAsync(req.body.id)
+        .then((data) => {
+          var owner = data.org_name;
+          var repoName = data.name;
+          utils.getPullRequestsAsync(userHandle, repoName, owner)
+          .then((data) => {
+            console.log('pulls: ', data);
+            var pulls = utils.formatPulls(data);
+            _.forEach(data, function(pull) {
+              Pulls.makePullByUserAsync(pull, userHandle)
+              .then((data) => {
+                res.send('received');
+              });
+            });
+          });
+        });
+      })
+      .catch((error) => {
+        console.log('test: ', error);
       });
     })
     .delete(() => {
@@ -66,6 +87,14 @@ module.exports = (app, express) => {
       .then(() => {
         res.send('deleted');
       })
+    })
+
+  app.route('/api/user/pulls')
+    .get((req, res) =>{
+      Pulls.getPullsByUserAsync('tasiov')
+      .then((data) => {
+        res.send(data);
+      });
     })
 
   app.route('/api/user')
@@ -92,7 +121,7 @@ module.exports = (app, express) => {
     });
 
   // Kills the user session on logout
-  app.get('/logout', (req, res) => {
+  app.get('/logout', function(req, res) {
     if(req.session.user) {
       req.session.destroy(console.log);
       res.redirect('https://github.com/logout');
@@ -103,7 +132,7 @@ module.exports = (app, express) => {
 
   app.get('/auth/github', passport.authenticate('github'));
 
-  app.get('/auth/github/callback', 
+  app.get('/auth/github/callback',
     passport.authenticate('github', {failureRedirect:'/'}),
     (req, res) => {
        Users.getUserAsync(req.user.profile.username)
@@ -125,7 +154,7 @@ module.exports = (app, express) => {
       });
     });
 }
-      
+
 
 
 
