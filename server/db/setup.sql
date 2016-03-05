@@ -92,14 +92,16 @@ CREATE TABLE users (
   plan_space int UNSIGNED,
   plan_private_repos int UNSIGNED,
   plan_collaborators int UNSIGNED,
-  game_tickets_completed int UNSIGNED,
-  game_level int UNSIGNED
+  game_tickets_completed int UNSIGNED DEFAULT 0,
+  game_level int UNSIGNED DEFAULT 0
 );
 
 CREATE TABLE pulls (
  internal_id INT AUTO_INCREMENT PRIMARY KEY,
- merged BOOLEAN not null,
- name nvarchar(100) not null,
+ id int,
+ html_url nvarchar(100),
+ title nvarchar(100), 
+ merged BOOLEAN not null DEFAULT 0,
  user_id INT not null,
  FOREIGN KEY (user_id)
   REFERENCES users(internal_id)
