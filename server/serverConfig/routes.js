@@ -72,12 +72,12 @@ module.exports = (app, express) => {
             _.forEach(data, function(pull) {
               Pulls.makePullByUserAsync(pull, userHandle)
               .then((data) => {
-                res.send('received');
               });
             });
           });
         });
-      })
+      res.send('received');
+      });
       .catch((error) => {
         console.log('test: ', error);
       });
