@@ -17,6 +17,7 @@ FavoritedRepos.prototype.getFavoritedReposAsync = function(userHandle, forceRefr
   if (!this._favoritedRepos[userHandle] && !forceRefresh) {
   	return new Promise((resolve) => resolve(this._favoritedRepos[userHandle]));
   } else {
+<<<<<<< HEAD
   	return db.raw(`SELECT repos.* FROM ${dbJoinTableQuery} WHERE users.login = '${userHandle}'`)
     .then((results) => {
    		var usersRepos = {};
@@ -30,6 +31,22 @@ FavoritedRepos.prototype.getFavoritedReposAsync = function(userHandle, forceRefr
       this._favoritedRepos[userHandle] = usersRepos;
       return this._favoritedRepos[userHandle];
     });
+=======
+  return db.raw(`SELECT repos.*
+   							FROM ${dbJoinTableQuery} 
+  							WHERE users.login = '${userHandle}'`)
+           .then((results) => {
+           		this._favoritedRepos = {empty: true};
+              var RowDataArray = Object.keys(results[0]).map(k => results[0][k]);
+              RowDataArray.forEach(RowData => {
+              	this._favoritedRepos.empty ? delete this._favoritedRepos.empty: null;
+                var regObj = {};
+                Object.keys(RowData).forEach(key => regObj[key] = RowData[key]);
+                this._favoritedRepos[regObj.id] = regObj;
+              })
+              return this._favoritedRepos;
+           }); 
+>>>>>>> Fix syntax errors, convert anonymous functions to arrow functions in
   }
 }
 
