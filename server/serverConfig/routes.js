@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-'use strict';
-=======
-"use strict";
 
->>>>>>> Fix syntax errors, convert anonymous functions to arrow functions in
+"use strict";
 var request = require('request');
 var _ = require('lodash');
 var passport = require('passport');
@@ -34,7 +30,7 @@ module.exports = (app, express) => {
   });
 
   app.route('/api/issues')
-    .get((req, res) => {
+    .get(function(req, res) {
       Issues.getIssues()
       .then((results) => res.send(results))
       .catch((err) => {
@@ -44,7 +40,7 @@ module.exports = (app, express) => {
     });
 
   app.route('/api/repos')
-    .get((req, res) => {
+    .get(function(req, res){
       Repos.getRepos()
       .then((results) => res.send(results))
       .catch(() => {
@@ -52,39 +48,12 @@ module.exports = (app, express) => {
       });
     });
 
-  // app.route('/api/pulls')
-  //   .get('/repo/pulls', function(req, res) {
-  //   // example request url:
-  //   //    http://localhost:3000/repo/pulls?repo=DapperArgentina&owner=photogenic-wound
-  //   utils.getPullRequestsAsync(req.session.userHandle, req.query.repo, req.query.owner)
-  //   .then(function(data) {
-  //     var pulls = utils.formatPulls(data);
-  //     _.forEach(pulls, function(pull) {
-  //       Pulls.makePullByUserAsync(pull, req.session.userHandle);
-  //     });
-  //   })
-  //   .catch(function(err) {
-  //     console.log(err);
-  //   });
-  //   res.send('pulls');
-  // });
-
   app.route('/api/favorite')
     .get((req, res) => {
       console.log('hi',req.session);
       FaveRepos.getFavoritedReposAsync(req.session.passport.user.profile.username)
       .then((faveRepos) => {
-        if(!faveRepos.empty) {
-          let getPulls = _.mapValues(faveRepos, (repoId, repo) => {
-            return utils.getPullRequestsAsync(req.session.userHandle, repo.name, repo.org_name);
-          });
-          Promise.all(getPulls)
-          .then((data) => {
-            Object.keys(faveRepos).forEach((repoId, index) => {
-              faveRepos.pulls = utils.formatPulls(data[index]);
-            });
-          });
-        }
+        console.log('got all favorites');
         res.send(faveRepos);
       })
     })
@@ -125,7 +94,7 @@ module.exports = (app, express) => {
     });
 
   // Kills the user session on logout
-  app.get('/logout', (req, res) => {
+  app.get('/logout', function(req, res) {
     if(req.session.user) {
       req.session.destroy(console.log);
       res.redirect('https://github.com/logout');
