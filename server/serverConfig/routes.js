@@ -74,7 +74,25 @@ module.exports = (app, express) => {
       .then((userObj) => {
         res.send(userObj);
       })
-    })
+    });
+
+  app.route('/api/friends')
+    .get((req, res) => {
+      User.getOtherUsersAsync(req.session.passport.user.profile.username)
+      .then((usersMap) => {
+        var usersMapWFaves = _.mapValues(usersMap, (userFields) => {
+          return new Promise((resolve, reject) => {
+            return getFavoritedReposAsync(userFields.login)
+                    .then((favedRepos) => {
+                      userFields.favedRepos = faveRepos;
+                      resolve(userFields);
+                    })
+                    .catch(() => reject('counldnt fetch repos'));
+          });
+        });
+        Promise.props(usersMapWFaves).then(res.send);
+      })
+    });
 
   // Kills the user session on logout
   app.get('/logout', (req, res) => {
