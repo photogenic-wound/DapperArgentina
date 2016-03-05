@@ -1,4 +1,4 @@
-
+'use strict';
 const DateDiff = require('date-diff');
 const Promise = require('bluebird');
 var db = require('../db/database');
@@ -29,6 +29,18 @@ Repos.prototype.getRepos = function () {
     return new Promise((resolve) => resolve(this._repos));
   }
 };
+
+Repos.prototype.insertRepoAsync = function(repo) {
+   
+    // Function to map user properties to usable SQL strings
+    let userKeys = [];
+    let userVals = [];
+     _.each(repo,(val,key) => {
+      userKeys.push( key + '');
+      userVals.push( '"' + val + '"');
+     })
+    return db.raw(`INSERT INTO repos ( ${userKeys.join()} ) VALUES (${userVals.join()})`)
+}
 
 module.exports = Repos;
 
