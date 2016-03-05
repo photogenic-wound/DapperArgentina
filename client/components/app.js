@@ -6,10 +6,10 @@ const Users = require('../js/users');
 const FavedRepos = require('../js/favedRepos');
 
 const linksList = [
-  {name: "my profile", url: '/profile'},
-  {name: "tickets", url: '/'},
-  {name: "repositories", url: '/repos'},
+  {name: "new tickets", url: '/'},
+  {name: "repos", url: '/repos'},
   {name: "getting started", url: '/resources'},
+  {name: "pull requests", url: '/pulls'}
 ];
 
 const App = class App extends React.Component {
@@ -29,21 +29,16 @@ const App = class App extends React.Component {
   }
 
   getUser(){
-    Users.getUserFromApi(user => this.setState({user}), console.log);
-  }
-
-  getFavedRepos() {
-    FavedRepos.getFavedReposFromApi(favedRepos => this.setState({favedRepos}),
-    console.log);
-  }
-
-  setLanguages () {
-    Repos.getLanguages(languages => this.setState({languages}), console.log);
+    Users.getUserFromApi((result) => {
+      this.setState({user:result});
+    }, (result) => {
+      console.log("Err",result)
+    })
   }
   
   getIssues(searchTerm, language){
     //Fetch issues;
-    Issues.getIssues(data => {
+    Issues.getIssues((data) => {
       this.setState({
         numberOfTickets: data.length,
         ticketsToRender: data.slice(0,199)
@@ -54,12 +49,30 @@ const App = class App extends React.Component {
   getRepos(searchTerm, language){
     //Fetch repos;
     //refactor to exclude 'self/this' with es6 syntax?
-    Repos.getRepos(data => {
+    Repos.getRepos((data) => {
       this.setState({
         numberOfRepos: data.length,
         reposToRender: data.slice(0,199)
       });
     }, console.log, searchTerm, language);
+  }
+
+  getFavedRepos() {
+    FavedRepos.getFavedReposFromApi((data) => {
+      this.setState({
+        favedRepos: data
+      });
+    }, console.log)
+  }
+
+  setLanguages () {
+    //We should only run this once per component rendering (ie. componentDidMount)
+    //Multiple calls to material_select screws up the rendering
+    Repos.getLanguages((languages) => {
+      this.setState({
+        languages: languages
+      });
+    });
   }
 
   componentWillMount() {
@@ -73,9 +86,9 @@ const App = class App extends React.Component {
   render () {
     return (
     <div className='app-shell grey lighten-2'>
-      <NavBar links={linksList}/>
+      <NavBar user={this.state.user} links={linksList}/>
       <div className="row">
-        <div className="main col-sm-10 container">
+        <div className="main col-md-12 container">
           {React.cloneElement(this.props.children, {
               route: this.state.route,
               reposToRender: this.state.reposToRender,
@@ -89,36 +102,36 @@ const App = class App extends React.Component {
               getFavedRepos: this.getFavedRepos.bind(this),
               user: this.state.user,
               favedRepos: this.state.favedRepos,
-              // favorites: { "results": [
-              //   {
-              //     "name":"test name 1",
-              //     "org_name":"org test name 1",
-              //     "html_url":"#",
-              //     "description":"test description 1",
-              //     "language":"javascript"
-              //   },
-              //   {
-              //     "name":"test name 2",
-              //     "org_name":"org test name 2",
-              //     "html_url":"#",
-              //     "description":"test description 2",
-              //     "language":"javascript"
-              //   },
-              //   {
-              //     "name":"test name 3",
-              //     "org_name":"org test name 3",
-              //     "html_url":"#",
-              //     "description":"test description 3",
-              //     "language":"javascript"
-              //   },
-              //   {
-              //     "name":"test name 4",
-              //     "org_name":"org test name 4",
-              //     "html_url":"#",
-              //     "description":"test description 4",
-              //     "language":"javascript"
-              //   }
-              // ]}
+              favorites: { "results": [
+                {
+                  "name":"test name 1",
+                  "org_name":"org test name 1",
+                  "html_url":"#",
+                  "description":"test description 1",
+                  "language":"javascript"
+                },
+                {
+                  "name":"test name 2",
+                  "org_name":"org test name 2",
+                  "html_url":"#",
+                  "description":"test description 2",
+                  "language":"javascript"
+                },
+                {
+                  "name":"test name 3",
+                  "org_name":"org test name 3",
+                  "html_url":"#",
+                  "description":"test description 3",
+                  "language":"javascript"
+                },
+                {
+                  "name":"test name 4",
+                  "org_name":"org test name 4",
+                  "html_url":"#",
+                  "description":"test description 4",
+                  "language":"javascript"
+                }
+              ]}
           })}
         </div>
       </div>

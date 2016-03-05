@@ -14,10 +14,20 @@ const NavBar = class NavBar extends React.Component {
   }
   
   render() {
+    let headerText = '';
+    if(this.props.user){
+      headerText = this.props.user.login
+    }
+    
     return (
       <div className="navbar-fixed">
         <nav className="cyan lighten-2" role="navigation">
-          <div className="nav-wrapper container col s12 m4 l8"><a id="logo-container" href="#" className="brand-logo">good first ticket</a>
+          <div className="nav-wrapper container col s12 m4 l8">
+            <Link to={"/profile"}>
+              <i className="material-icons left">perm_identity</i>
+              <span>{headerText}</span>
+            </Link>
+            <a id="logo-container" href="#" className="brand-logo left">best first ticket</a>
             <ul className="right hide-on-med-and-down">
               {this.props.links.map ((link, index) => 
                 <NavEntry data={link} key={index} />
@@ -28,7 +38,7 @@ const NavBar = class NavBar extends React.Component {
                 <NavEntry data={link} key={index} />
               )}
             </ul>
-            <a href="#" data-activates="nav-mobile" className="button-collapse"><i className="material-icons">menu</i></a>
+            <a href="#" data-activates="nav-mobile" className="button-collapse right"><i className="material-icons">menu</i></a>
           </div>
         </nav>
       </div>
