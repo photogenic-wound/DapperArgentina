@@ -47,11 +47,39 @@ module.exports = (app, express) => {
       });
     });
 
+  // app.route('/api/pulls')
+  //   .get('/repo/pulls', function(req, res) {
+  //   // example request url:
+  //   //    http://localhost:3000/repo/pulls?repo=DapperArgentina&owner=photogenic-wound
+  //   utils.getPullRequestsAsync(req.session.userHandle, req.query.repo, req.query.owner)
+  //   .then(function(data) {
+  //     var pulls = utils.formatPulls(data);
+  //     _.forEach(pulls, function(pull) {
+  //       Pulls.makePullByUserAsync(pull, req.session.userHandle);
+  //     });
+  //   })
+  //   .catch(function(err) {
+  //     console.log(err);
+  //   });
+  //   res.send('pulls');
+  // });
+
   app.route('/api/favorite')
     .get((req, res) => {
       console.log('hi',req.session);
       FaveRepos.getFavoritedReposAsync(req.session.passport.user.profile.username)
       .then((faveRepos) => {
+        if(!faveRepos.empty) {
+          let getPulls = _.mapValues(faveRepos, (repoId, repo) => {
+            return utils.getPullRequestsAsync(req.session.userHandle, repo.name, repo.org_name);
+          });
+          Promise.all(getPulls)
+          .then(function(data) {
+            Object.keys(faveRepos).forEach((repoId, index) => {
+              faveRepos.pulls = utils.formatPulls(data[index]);
+            });
+          });
+        }
         res.send(faveRepos);
       })
     })
@@ -101,6 +129,7 @@ module.exports = (app, express) => {
     }
   });
 
+<<<<<<< HEAD
   app.get('/auth/github', passport.authenticate('github'));
 
   app.get('/auth/github/callback',
@@ -124,6 +153,52 @@ module.exports = (app, express) => {
         }
       });
     });
+=======
+  // GitHub redirects user to /login/auth endpoint after login
+  app.get('/login/auth', function(req, res) {
+    req.session.user = true;
+
+    // Make initial request to GitHub OAuth for access token
+    utils.getAccessTokenAsync(req.query.code)
+    .then(function(result) {
+      var access_token = result.body;
+      req.session.access_token = access_token;
+
+      // Make request to github for current user information
+      utils.getUserInfoAsync(access_token)
+      .then(function(result) {
+        // Format user object so that it can be consumed by mysql
+        var userObj = utils.formatUserObj(JSON.parse(result.body));
+        req.session.userHandle = userObj.login;
+        req.session.save(utils.logError);
+
+        // Check if current user exists in the db
+        User.getUserAsync(userObj.login)
+        .then(function(user) {
+
+          if (user.login === undefined) {
+            // If user is not in db, insert new user
+            User.makeNewUserAsync(userObj)
+            .then(function(data) {
+              console.log('new user created in db: ', data);
+              res.redirect('/')
+            }).catch(console.log);
+          } else {
+
+            // If user is currently in db, update user data
+            User.updateUserAsync(userObj)
+            .then(function(data) {
+              console.log('updated user in db: ', data);
+              res.redirect('/')
+            }).catch(console.log);
+          }
+        }).catch(console.log);
+      }).catch(console.log);
+    }).catch(console.log);
+  });
+
+
+>>>>>>> Add pulls to faveRepos before sending
 }
 
 
