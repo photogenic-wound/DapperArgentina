@@ -22,7 +22,7 @@ class FriendList extends React.Component {
     <div>
       <h4>Friends on Github</h4>
       <div className="main-friends-view">
-          {_values(this.props.friends).map ((friend, index) => (
+          {_values(this.state.friends).map ((friend, index) => (
               <FriendEntry data={friend} key={index} />
             )
           )}
