@@ -18,8 +18,8 @@ Pulls.prototype.makePullByUserAsync = function(pull, userHandle) {
 	return this.getUserIdAsync(userHandle)
 	.then((user_id) => {
 		pull.user_id = user_id;
-		pull.merged = Number(pull.merged);
-		
+		pull.merged = Number(pull.state === "closed");
+
 	  let acceptedKeys = ['id', 'html_url', 'title', 'merged', 'user_id'];
 	  let pullKeys = [];
 	  let pullVals = [];

@@ -9,7 +9,6 @@ var config = require('../config');
 var utils = require('./utils');
 
 
-<<<<<<< HEAD
 passport.use(new GitHubStrategy({
   clientID: config.githubClientId,
   clientSecret: config.githubSecret,
@@ -33,35 +32,8 @@ module.exports = (app, express) => {
   app.use(morgan('dev'));
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(bodyParser.json());
-  app.use((req, res, next) => {
-=======
-module.exports = function(app, express) {
-  app.use(morgan('dev'));
-  app.use(bodyParser.urlencoded({extended: true}));
-  app.use(bodyParser.json());
-
-  app.use(session( {
-    secret: 'it\'s a secret',
-    resave: false,
-    saveUninitialized: false
-  }));
-
-  app.use(utils.unless('/login/auth', function (req, res, next) {
-    if (req.session.user) {
-      next();
-    } else {
-      /* If there is no active user session, redirect the client to the
-       * GitHub OAuth page.
-       */
-      var ghAuthUrl = 'https://github.com/login/oauth/authorize?client_id='
-       + config.githubClientId
-       + '&redirect_uri=http://localhost:3000/login/auth';
-      res.redirect(ghAuthUrl);
-    }
-  }));
 
   app.use(function(req, res, next) {
->>>>>>> Revert serverConfig routes back the way they were
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
@@ -73,6 +45,5 @@ module.exports = function(app, express) {
 
 
   app.use('/app', express.static(__dirname + '/../../client'));
-;
 };
 

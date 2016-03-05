@@ -57,10 +57,29 @@ module.exports = (app, express) => {
         res.send(faveRepos);
       })
     })
-    .post((req, res) => {
-      FaveRepos.insertFavoritedRepoAsync(req.body.id, req.session.passport.user.profile.username)
-      .then(() => {
-        res.send('received');
+    .post(function(req, res) {
+      var userHandle = req.session.passport.user.profile.username; // userHandle = req.session.passport.user.profile.username
+      FaveRepos.insertFavoritedRepoAsync(req.body.id, userHandle)
+      .then((data) => {
+        Repos.getRepoByIdAsync(req.body.id)
+        .then((data) => {
+          var owner = data.org_name;
+          var repoName = data.name;
+          utils.getPullRequestsAsync(userHandle, repoName, owner)
+          .then((data) => {
+            console.log('pulls: ', data);
+            var pulls = utils.formatPulls(data);
+            _.forEach(data, function(pull) {
+              Pulls.makePullByUserAsync(pull, userHandle)
+              .then((data) => {
+                res.send('received');
+              });
+            });
+          });
+        });
+      })
+      .catch((error) => {
+        console.log('test: ', error);
       });
     })
     .delete(() => {
@@ -68,6 +87,14 @@ module.exports = (app, express) => {
       .then(() => {
         res.send('deleted');
       })
+    })
+
+  app.route('/api/user/pulls')
+    .get((req, res) =>{
+      Pulls.getPullsByUserAsync('tasiov')
+      .then((data) => {
+        res.send(data);
+      });
     })
 
   app.route('/api/user')
