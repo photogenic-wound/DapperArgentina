@@ -25,7 +25,7 @@ class PullList extends React.Component {
         <PullSearch searchHandler={this.props.getFavedRepos} languages={this.props.languages} />
         <h4>You have {this.props.FavedRepos} pull requests</h4>
         <div className="main-pulls-view">
-          <ul id="pull-list" classname="collapsible popout">
+          <ul id="pull-list" className="collapsible popout">
             {_.map(this.props.FavedRepos, (pull, index) => 
               <PullEntry data={pull} key={index} />
             )}
