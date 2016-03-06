@@ -103,6 +103,7 @@ const App = class App extends React.Component {
   }
 
   render () {
+    window.statePeek = this.state;
     return (
     <div className='app-shell grey lighten-2'>
       <NavBar user={this.state.user} links={linksList}/>
