@@ -28,8 +28,8 @@ const App = class App extends React.Component {
       numberOfTickets: 0,
       languages: [],
       favedRepos: {},
-      friends: {}
-      pulls:
+      friends: {},
+      pulls: [],
     };
   }
 
@@ -99,7 +99,7 @@ const App = class App extends React.Component {
     this.setLanguages();
     this.getUser();
     this.getFavedRepos();
-    this.getPulls()
+    this.getPulls();
   }
 
   render () {
@@ -122,7 +122,7 @@ const App = class App extends React.Component {
               getFavedRepos: this.getFavedRepos.bind(this),
               user: this.state.user,
               favedRepos: this.state.favedRepos,
-              friends: this.state.friends
+              friends: this.state.friends,
               pulls: this.state.pulls,
               favorites: { "results": [
                 {
